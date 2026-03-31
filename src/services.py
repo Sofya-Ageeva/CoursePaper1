@@ -1,28 +1,13 @@
 import logging
-from typing import List, Dict, Any
-from datetime import datetime
 import re
+from datetime import datetime
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
-def investment_bank(
-    month: str,
-    transactions: List[Dict[str, Any]],
-    limit: int
-) -> float:
-    """Рассчитывает сумму для «Инвесткопилки» через округление трат.
 
-    Args:
-        month (str): Месяц в формате 'YYYY-MM'.
-        transactions (List[Dict[str, Any]]): Список транзакций.
-        limit (int): Предел округления (10, 50, 100).
-
-    Returns:
-        float: Сумма, отложенная в «Инвесткопилку».
-
-    Raises:
-        ValueError: При некорректном формате месяца.
-    """
+def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) -> float:
+    """Рассчитывает сумму для «Инвесткопилки» через округление трат."""
     try:
         target_month = datetime.strptime(month, '%Y-%m')
         total_saved = 0.0
@@ -44,8 +29,9 @@ def investment_bank(
                 continue
 
             # Проверка, относится ли транзакция к целевому месяцу
-            if (transaction_date.year == target_month.year and
-                transaction_date.month == target_month.month):
+
+            if (transaction_date.year == target_month.year
+                    and transaction_date.month == target_month.month):
                 # Округление вверх до ближайшего кратного limit
                 if amount % limit == 0:
                     rounded_amount = amount
@@ -74,8 +60,6 @@ def search_by_phone_numbers(transactions: List[Dict[str, Any]]) -> List[Dict[str
     """
     # Улучшенное регулярное выражение — более гибкое
     phone_pattern = r'\+7[\s\-]?(?:\(\d{3}\)|\d{3})[\s\-]?\d{1,3}[\s\-]?\d{2}[\s\-]?\d{2}'
-
-
     result = []
 
     for transaction in transactions:
@@ -97,7 +81,3 @@ def search_by_phone_numbers(transactions: List[Dict[str, Any]]) -> List[Dict[str
 
     logger.info(f"Найдено {len(result)} транзакций с телефонными номерами")
     return result
-
-
-
-
