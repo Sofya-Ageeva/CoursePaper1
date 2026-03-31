@@ -33,6 +33,7 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) 
             if (transaction_date.year == target_month.year
                     and transaction_date.month == target_month.month):
                 # Округление вверх до ближайшего кратного limit
+
                 if amount % limit == 0:
                     rounded_amount = amount
                 else:
@@ -50,20 +51,12 @@ def investment_bank(month: str, transactions: List[Dict[str, Any]], limit: int) 
 
 
 def search_by_phone_numbers(transactions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Ищет транзакции с телефонными номерами в описании.
+    """Поиск транзакции с телефонными номерами в описании."""
 
-    Args:
-        transactions (List[Dict[str, Any]]): Список транзакций.
-
-    Returns:
-        List[Dict[str, Any]]: Транзакции с телефонными номерами.
-    """
-    # Улучшенное регулярное выражение — более гибкое
     phone_pattern = r'\+7[\s\-]?(?:\(\d{3}\)|\d{3})[\s\-]?\d{1,3}[\s\-]?\d{2}[\s\-]?\d{2}'
     result = []
 
     for transaction in transactions:
-        # Безопасное получение описания
         description = transaction.get('Описание', '')
         if description is None:
             description = ''
