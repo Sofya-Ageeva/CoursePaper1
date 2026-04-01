@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timedelta
+from typing import Tuple
 
 import pandas as pd
 
@@ -45,18 +46,31 @@ def filter_by_date_range(df: pd.DataFrame, start_date: datetime, end_date: datet
     return filtered_df
 
 
-def get_date_range_by_period(date_str: str, period: str = 'M') -> tuple[datetime, datetime]:
-    """Возвращает диапазон дат в зависимости от периода."""
+def get_date_range_by_period(date_str: str, period: str) -> Tuple[datetime, datetime]:
+    """Возвращает диапазон дат для заданного периода."""
+    # Парсим входную дату
     target_date = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
-    end_date = target_date
 
     if period == 'W':
-        start_date = end_date - timedelta(days=end_date.weekday())
+        # Понедельник — начало недели (weekday() возвращает 0 для понедельника)
+        days_offset = target_date.weekday()
+        start = (target_date - timedelta(days=days_offset)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        end = target_date
     elif period == 'M':
-        start_date = datetime(target_date.year, target_date.month, 1)
+        # Первое число месяца
+        start = target_date.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        end = target_date
     elif period == 'Y':
-        start_date = datetime(target_date.year, 1, 1)
+        # 1 января года
+        start = target_date.replace(
+            month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        end = target_date
     else:
-        raise ValueError(f"Неизвестный период: {period}")
+        raise ValueError(f"Unknown period: {period}")
 
-    return start_date, end_date
+    return start, end
